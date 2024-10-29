@@ -78,33 +78,33 @@ public class MessageService {
     }
 
     // 해당 유저 쪽지 전체 조회
-    public List<MessageDTO> getAllMessagesForUser(Long userId, String uid, UserDetails userDetails) {
+    public List<MessageDTO> getAllMessagesForUser(String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        return messageRepository.findAllBySenderIdOrReceiverId(userId, userId)
+        return messageRepository.findAllBySenderUidAndReceiverUid(uid, uid)
                 .stream()
                 .map(MessageDTO::entityToDTO)
                 .collect(Collectors.toList());
     }
 
     // 해당 유저 송신 쪽지 전체 조회
-    public List<MessageDTO> getAllMessageForSender(Long userId, String uid, UserDetails userDetails) {
+    public List<MessageDTO> getAllMessageForSender(String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        return messageRepository.findBySenderId(userId)
+        return messageRepository.findBySenderUid(uid)
                 .stream()
                 .map(MessageDTO::entityToDTO)
                 .collect(Collectors.toList());
     }
 
     // 해당 유저 수신 쪽지 전체 조회
-    public List<MessageDTO> getAllMessageForReceiver(Long userId, String uid, UserDetails userDetails) {
+    public List<MessageDTO> getAllMessageForReceiver(String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        return messageRepository.findByReceiverId(userId)
+        return messageRepository.findByReceiverUid(uid)
                 .stream()
                 .map(MessageDTO::entityToDTO)
                 .collect(Collectors.toList());

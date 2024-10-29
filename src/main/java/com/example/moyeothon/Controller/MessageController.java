@@ -42,20 +42,20 @@ public class MessageController {
     }
 
     // 해당 유저 쪽지 전체 조회
-    @GetMapping("/user/{userId}/{uid}")
-    public ResponseEntity<List<MessageDTO>> getAllMessagesForUser(@PathVariable Long userId, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(messageService.getAllMessagesForUser(userId, uid, userDetails));
+    @GetMapping("/user/{uid}")
+    public ResponseEntity<List<MessageDTO>> getAllMessagesForUser(@PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(messageService.getAllMessagesForUser(uid, userDetails));
     }
 
     // 해당 유저 송신 쪽지 전체 조회
-    @GetMapping("/user/sendmessage/{userId}/{uid}")
-    public ResponseEntity<List<MessageDTO>> getAllMessageForSender(@PathVariable Long userId, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(messageService.getAllMessageForSender(userId, uid, userDetails));
+    @GetMapping("/user/sendmessage/{uid}")
+    public ResponseEntity<List<MessageDTO>> getAllMessageForSender(@PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(messageService.getAllMessageForSender(uid, userDetails));
     }
 
     // 해당 유저 수신 쪽지 전체 조회
-    @GetMapping("/user/receivemessage/{userId}/{uid}")
-    public ResponseEntity<List<MessageDTO>> getAllMessageForReceiver(@PathVariable Long userId, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(messageService.getAllMessageForReceiver(userId, uid, userDetails));
+    @GetMapping("/user/receivemessage/{uid}")
+    public ResponseEntity<List<MessageDTO>> getAllMessageForReceiver(@PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(messageService.getAllMessageForReceiver(uid, userDetails));
     }
 }
