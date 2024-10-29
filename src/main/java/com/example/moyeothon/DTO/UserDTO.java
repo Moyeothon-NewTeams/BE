@@ -2,6 +2,7 @@ package com.example.moyeothon.DTO;
 
 import com.example.moyeothon.Entity.UserEntity;
 import lombok.*;
+import java.util.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +31,6 @@ public class UserDTO {
     }
 
     public UserEntity dtoToEntity() {
-        return new UserEntity(id, uid, password, name, nickname, email, provider);
+        return new UserEntity(id, uid, password, name, nickname, email, provider, new HashSet<>());
     }
 }
