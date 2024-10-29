@@ -1,15 +1,13 @@
 package com.example.moyeothon.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "users")
 @NoArgsConstructor
@@ -27,6 +25,21 @@ public class UserEntity implements UserDetails {
     private String nickname;
     private String email;
     private String provider;
+
+    public UserEntity(Long id, String uid, String password, String name, String nickname, String email, String provider) {
+        this.id = id;
+        this.uid = uid;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.provider = provider;
+    }
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
+    @Builder.Default
+    private Set<BucketlistEntity> bucket = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -57,4 +70,6 @@ public class UserEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
