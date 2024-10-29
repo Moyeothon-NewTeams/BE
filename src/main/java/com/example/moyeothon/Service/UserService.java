@@ -7,7 +7,6 @@ import com.example.moyeothon.DTO.JWTDTO;
 import com.example.moyeothon.DTO.UserDTO;
 import com.example.moyeothon.Entity.UserEntity;
 import com.example.moyeothon.Repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,26 +102,22 @@ public class UserService {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("권한이 없습니다");
         }
-
         UserEntity userEntity = userRepository.findByUid(uid);
         userRepository.delete(userEntity);
         logger.info("유저의 uid가 " + uid + "인 회원탈퇴 완료!");
         return UserDTO.entityToDto(userEntity);
     }
 
-    // 닉네임 수정
-    public UserDTO updateNickname(String uid, String nickname) {
+    // 닉네임 수정, 소셜 로그인 사용자라면 초기 닉네임 설정
+    public UserDTO updateNickname(String uid, String nickname, UserDetails userDetails) {
+        if(!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("권한이 없습니다");
+        }
         UserEntity userEntity = userRepository.findByUid(uid);
         userEntity.setNickname(nickname);
         UserEntity updatedUser = userRepository.save(userEntity);
         logger.info("사용자 닉네임 업데이트 완료! " + updatedUser);
         return UserDTO.entityToDto(updatedUser);
-    }
-
-    // URI 입력이 잘 되는지 확인하는 메서드
-    @PostConstruct
-    public void logKakaoOAuthSettings() {
-        logger.info("Kakao OAuth 설정 값 - clientId : {}, clientSecret : {}, redirectUri : {}", kakaoOAuthProperties.getClientId(), kakaoOAuthProperties.getClientSecret(), kakaoOAuthProperties.getRedirectUri());
     }
 
     // 카카오 인가 코드로 액세스 토큰을 요청하는 메서드

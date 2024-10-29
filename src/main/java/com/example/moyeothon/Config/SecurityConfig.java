@@ -15,7 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.moyeothon.Config.JWT.JwtAuthenticationFilter;
-import com.example.moyeothon.Service.UserDetailService;
 
 @Configuration
 @EnableWebSecurity
