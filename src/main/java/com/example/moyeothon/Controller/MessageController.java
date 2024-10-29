@@ -66,4 +66,11 @@ public class MessageController {
     public ResponseEntity<List<MessageDTO>> getAllMessageForReceiver(@PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(messageService.getAllMessageForReceiver(uid, userDetails));
     }
+
+    // 특정 키워드가 포함된 쪽지 검색 (카테고리 키워드 검색 구현 전 연습)
+    @Operation(summary = "특정 키워드가 포함된 쪽지 검색 (카테고리 키워드 검색 구현 전 연습)")
+    @GetMapping("/search/{uid}")
+    public ResponseEntity<List<MessageDTO>> searchMessagesByContent(@RequestParam String keyword, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(messageService.searchMessagesByContent(keyword, uid, userDetails));
+    }
 }

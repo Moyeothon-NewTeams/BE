@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -65,4 +67,10 @@ public class BucketController {
         return ResponseEntity.ok(bucketService.getAllBucket(userId));
     }
 
+    // 제목, 내용 키워드별로 버킷리스트 검색하기
+    @Operation(summary = "제목, 내용 키워드별로 버킷리스트 검색하기")
+    @GetMapping("/bucket/search/{uid}")
+    public ResponseEntity<List<ResponseDto>> searchTitleAndContent(@RequestParam String keyword, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(bucketService.searchTitleAndContent(keyword, uid, userDetails));
+    }
 }

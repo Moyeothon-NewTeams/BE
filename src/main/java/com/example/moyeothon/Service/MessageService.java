@@ -31,7 +31,7 @@ public class MessageService {
         }
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = userRepository.findById(messageDTO.getReceiverId()).orElseThrow();
-        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, MessageStatus.않읽음);
+        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, MessageStatus.안읽음);
         messageEntity.setCreateTime(LocalDateTime.now());
         logger.info("쪽지 전송 성공!");
         logger.info("전송된 쪽지 내용 : " + messageDTO.getContent() + ", 송신인 ID : " + sender.getId() + ", 수신인 ID : " + receiver.getId());
@@ -46,7 +46,7 @@ public class MessageService {
         MessageEntity originalMessage = messageRepository.findById(messageId).orElseThrow();
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = originalMessage.getSender();
-        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, MessageStatus.않읽음);
+        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, MessageStatus.안읽음);
         messageEntity.setCreateTime(LocalDateTime.now());
         logger.info("쪽지 전송 성공!");
         logger.info("전송된 쪽지 내용 : " + messageDTO.getContent() + ", 송신인 ID : " + sender.getId() + ", 수신인 ID : " + receiver.getId());
@@ -106,6 +106,18 @@ public class MessageService {
         }
         return messageRepository.findByReceiverUid(uid)
                 .stream()
+                .map(MessageDTO::entityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 키워드가 포함된 쪽지 검색 (카테고리 키워드 검색 구현 전 연습)
+    public List<MessageDTO> searchMessagesByContent(String keyword, String uid, UserDetails userDetails) {
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        return messageRepository.findByContentContainingIgnoreCase(keyword)
+                .stream()
+                .filter(message -> message.getSender().getUid().equals(uid) || message.getReceiver().getUid().equals(uid))
                 .map(MessageDTO::entityToDTO)
                 .collect(Collectors.toList());
     }
