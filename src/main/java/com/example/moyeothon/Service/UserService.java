@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Random;
 import java.util.Map;
 import java.util.Optional;
 
@@ -120,6 +121,18 @@ public class UserService {
         return UserDTO.entityToDto(updatedUser);
     }
 
+    // 닉네임 랜덤 생성 메서드
+    private String randomNickname() {
+        String[] A = {"멋진", "용감한", "빠른", "슬기로운", "조용한", "기분좋은", "귀여운", "신비로운", "재밌는", "상큼한", "활기찬", "따뜻한", "멋진", "반짝이는"};
+        String[] B = {"사자", "호랑이", "사슴", "독수리", "나무늘보", "고양이", "토끼", "강아지", "부엉이", "너구리", "햄스터", "다람쥐", "펭귄", "고슴도치"};
+
+        Random random = new Random();
+        String adjective = A[random.nextInt(A.length)];
+        String noun = B[random.nextInt(B.length)];
+
+        return adjective + noun;
+    }
+
     // 카카오 인가 코드로 액세스 토큰을 요청하는 메서드
     public String getAccessToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
@@ -195,11 +208,16 @@ public class UserService {
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
 
             String name = null;
+            String nickname = null;
             if (properties != null) {
                 name = (String) properties.get("nickname");
             }
             if (name == null) {
                 name = "카카오사용자";
+            }
+
+            if (nickname == null) {
+                nickname = randomNickname();
             }
 
             String email = null;
@@ -216,6 +234,7 @@ public class UserService {
             if (userEntity == null) {
                 userEntity = UserEntity.builder()
                         .uid(uid)
+                        .nickname(nickname)
                         .name(name)
                         .email(email)
                         .password(passwordEncoder.encode("oauth2user"))
@@ -225,6 +244,7 @@ public class UserService {
                 isNewUser = true;
             } else {
                 userEntity.setName(name);
+                userEntity.setNickname(nickname);
                 userEntity.setEmail(email);
                 userRepository.save(userEntity);
             }
@@ -318,16 +338,23 @@ public class UserService {
                 throw new RuntimeException("필수 사용자 정보를 가져올 수 없습니다.");
             }
 
+            String nickname = null;
+            if (nickname == null) {
+                nickname = randomNickname();
+            }
+
             Optional<UserEntity> userEntityOptional = Optional.ofNullable(userRepository.findByUid(uid));
             UserEntity userEntity;
             if (userEntityOptional.isPresent()) {
                 userEntity = userEntityOptional.get();
                 userEntity.setName(name);
+                userEntity.setNickname(nickname);
                 userEntity.setEmail(email);
             } else {
                 userEntity = UserEntity.builder()
                         .uid(uid)
                         .name(name)
+                        .nickname(nickname)
                         .email(email)
                         .password(passwordEncoder.encode("OAuth2_User_Password"))
                         .provider("google")
