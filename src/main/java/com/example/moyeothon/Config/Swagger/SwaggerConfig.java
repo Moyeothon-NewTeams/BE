@@ -1,4 +1,4 @@
-package com.example.moyeothon.Config.OAuthProperties;
+package com.example.moyeothon.Config.Swagger;
 
 
 import io.swagger.v3.oas.models.info.Info;
@@ -18,8 +18,8 @@ public class SwaggerConfig {
     }
     private Info apiInfo() {
         return new Info()
-                .title("Goody Swagger")
-                .description("Goody bucketList Rest Api")
+                .title("\uD83E\uDD81 멋사 모여톤 10팀 스웨거 \uD83D\uDC8E")
+                .description("모여톤 10팀의 스웨거입니다.")
                 .version("1.0.0");
     }
 }
