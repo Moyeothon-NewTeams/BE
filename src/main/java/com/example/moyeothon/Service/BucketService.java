@@ -11,10 +11,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +98,14 @@ public class BucketService {
         return responseDtoList;
     }
 
-
-
+    // 제목, 내용 키워드별로 버킷리스트 검색하기
+    public List<ResponseDto> searchTitleAndContent(String keyword, String uid, UserDetails userDetails) {
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        return bucketRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword)
+                .stream()
+                .map(ResponseDto::entityToDTO)
+                .collect(Collectors.toList());
+    }
 }

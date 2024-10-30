@@ -1,4 +1,4 @@
-# BE
+# 🦁 Team Backend 🦁
 🙋 모여톤 백엔드 레포지토리
 
 ## 🧑‍💻 멤버
@@ -6,3 +6,33 @@
 |:---:|:---:|:---:|:---:|
 |프로필|<img src="https://avatars.githubusercontent.com/u/159096610?v=4"/>|<img src="https://avatars.githubusercontent.com/u/144472331?v=4"/>|<img src="https://avatars.githubusercontent.com/u/130127934?v=4"/>|
 |역할|<img src="https://skillicons.dev/icons?i=spring">|<img src="https://skillicons.dev/icons?i=spring">|<img src="https://skillicons.dev/icons?i=spring">|
+
+## 🧑‍💻 사용된 기술 스택
+
+### 🛠️ Tool
+<p align="center">
+	<img src="https://skillicons.dev/icons?i=java"><img src="https://skillicons.dev/icons?i=spring"><img src="https://skillicons.dev/icons?i=python"><img src="https://skillicons.dev/icons?i=gcp">
+</p>
+
+### 💾 Database
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=mysql"><img src="https://skillicons.dev/icons?i=aws">
+</p>
+
+### 🚀 Deployment
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=aws"><img src="https://skillicons.dev/icons?i=jenkins"><img src="https://skillicons.dev/icons?i=firebase">
+</p>
+
+### 🗣️ Communication
+<p align="center">
+    <img src="https://skillicons.dev/icons?i=figma"><img src="https://skillicons.dev/icons?i=notion"><img src="https://skillicons.dev/icons?i=discord">
+</p>
+
+## 서버 플로우 동작
+<p align="center">
+    <img src="image/모여톤 플로우.jpeg" alt="카카오 로그인">
+</p> 
+
+## API 동작
+- 추가 예정

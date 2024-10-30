@@ -17,7 +17,14 @@ public class ResponseDto {
     private String content;
     private boolean isPublic;
 
-
+    public static ResponseDto entityToDTO(BucketlistEntity bucketlistEntity){
+        return new ResponseDto(
+                bucketlistEntity.getId(),
+                bucketlistEntity.getTitle(),
+                bucketlistEntity.getContent(),
+                bucketlistEntity.isPublic()
+        );
+    }
 
     public ResponseDto(BucketlistEntity bucket) {
         this.id = bucket.getId();
