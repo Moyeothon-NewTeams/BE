@@ -32,11 +32,11 @@ public class UserController {
         return ResponseEntity.ok(userService.login(userDTO.getUid(), userDTO.getPassword()));
     }
 
-    // 유저 조회
-    @Operation(summary = "유저 조회")
+    // uid로 해당 유저 조회
+    @Operation(summary = "uid로 해당 유저 조회")
     @GetMapping("/{uid}")
-    public ResponseEntity<UserDTO> getUserByUid(@PathVariable String uid) {
-        return ResponseEntity.ok(userService.getUserByUid(uid));
+    public ResponseEntity<UserDTO> getUserByUid(@PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(userService.getUserByUid(uid, userDetails));
     }
 
     // 회원 정보 수정

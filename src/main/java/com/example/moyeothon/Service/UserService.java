@@ -72,8 +72,11 @@ public class UserService {
         return new JWTDTO(token, UserDTO.entityToDto(userEntity));
     }
 
-    // 유저 조회
-    public UserDTO getUserByUid(String uid) {
+    // uid로 해당 유저 조회
+    public UserDTO getUserByUid(String uid, UserDetails userDetails) {
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("권한이 없습니다");
+        }
         UserEntity userEntity = userRepository.findByUid(uid);
         return UserDTO.entityToDto(userEntity);
     }
@@ -92,7 +95,6 @@ public class UserService {
         if (userDTO.getNickname() != null) {
             userEntity.setNickname(userDTO.getNickname());
         }
-
         UserEntity updatedUser = userRepository.save(userEntity);
         logger.info("사용자 정보 업데이트 완료! " + updatedUser);
         return UserDTO.entityToDto(updatedUser);
