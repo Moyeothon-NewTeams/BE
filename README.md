@@ -1,6 +1,8 @@
 # 🦁 Team Backend 🦁
 🙋 모여톤 백엔드 레포지토리
 
+⚠️ 푸쉬했다면 꼭 말해주기
+
 ## 🧑‍💻 멤버
 |이름|[이예은](https://github.com/eunxeum)|[송성민](https://github.com/tjdals4716)|[박제영](https://github.com/Zero982)|
 |:---:|:---:|:---:|:---:|
@@ -21,7 +23,7 @@
 
 ### 🚀 Deployment
 <p align="center">
-    <img src="https://skillicons.dev/icons?i=aws"><img src="https://skillicons.dev/icons?i=jenkins"><img src="https://skillicons.dev/icons?i=firebase">
+    <img src="https://skillicons.dev/icons?i=aws"><img src="https://skillicons.dev/icons?i=jenkins"><img src="https://skillicons.dev/icons?i=flask">
 </p>
 
 ### 🗣️ Communication
@@ -32,7 +34,4 @@
 ## 서버 플로우 동작
 <p align="center">
     <img src="image/모여톤 플로우.jpeg" alt="카카오 로그인">
-</p> 
-
-## API 동작
-- 추가 예정
+</p>

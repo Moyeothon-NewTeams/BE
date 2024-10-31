@@ -77,12 +77,12 @@ public class MessageService {
         return MessageDTO.entityToDTO(messageEntity);
     }
 
-    // 해당 유저 쪽지 전체 조회
+    // 해당 유저 송수신 쪽지 전체 조회
     public List<MessageDTO> getAllMessagesForUser(String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        return messageRepository.findAllBySenderUidAndReceiverUid(uid, uid)
+        return messageRepository.findAllBySenderUidOrReceiverUid(uid, uid)
                 .stream()
                 .map(MessageDTO::entityToDTO)
                 .collect(Collectors.toList());
