@@ -1,9 +1,11 @@
 package com.example.moyeothon.Service;
 
 import com.example.moyeothon.DTO.MessageDTO;
+import com.example.moyeothon.Entity.BucketlistEntity;
 import com.example.moyeothon.Entity.MessageEntity;
 import com.example.moyeothon.Entity.UserEntity;
 import com.example.moyeothon.Enum.MessageStatus;
+import com.example.moyeothon.Repository.BucketRepository;
 import com.example.moyeothon.Repository.MessageRepository;
 import com.example.moyeothon.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,33 +25,36 @@ public class MessageService {
     private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final BucketRepository bucketRepository;
 
     // 쪽지 전송
-    public MessageDTO createMessage(String uid, MessageDTO messageDTO, UserDetails userDetails) {
+    public MessageDTO createMessage(String uid, Long bucketListId, MessageDTO messageDTO, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = userRepository.findById(messageDTO.getReceiverId()).orElseThrow();
-        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, MessageStatus.안읽음);
+        BucketlistEntity bucketList = bucketRepository.findById(bucketListId).orElseThrow();
+        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, bucketList);
         messageEntity.setCreateTime(LocalDateTime.now());
+        messageEntity.setStatus(MessageStatus.안읽음);
         logger.info("쪽지 전송 성공!");
-        logger.info("전송된 쪽지 내용 : " + messageDTO.getContent() + ", 송신인 ID : " + sender.getId() + ", 수신인 ID : " + receiver.getId());
         return MessageDTO.entityToDTO(messageRepository.save(messageEntity));
     }
 
     // 쪽지 답장
-    public MessageDTO replyMessage(Long messageId, String uid, MessageDTO messageDTO, UserDetails userDetails) {
+    public MessageDTO replyMessage(Long messageId, String uid, Long bucketListId, MessageDTO messageDTO, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
         MessageEntity originalMessage = messageRepository.findById(messageId).orElseThrow();
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = originalMessage.getSender();
-        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, MessageStatus.안읽음);
+        BucketlistEntity bucketList = bucketRepository.findById(bucketListId).orElseThrow();
+        MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, bucketList);
         messageEntity.setCreateTime(LocalDateTime.now());
-        logger.info("쪽지 전송 성공!");
-        logger.info("전송된 쪽지 내용 : " + messageDTO.getContent() + ", 송신인 ID : " + sender.getId() + ", 수신인 ID : " + receiver.getId());
+        messageEntity.setStatus(MessageStatus.안읽음);
+        logger.info("쪽지 답장 성공!");
         return MessageDTO.entityToDTO(messageRepository.save(messageEntity));
     }
 
@@ -77,8 +82,7 @@ public class MessageService {
         if (!messageEntity.getSender().getUid().equals(uid)) {
             throw new RuntimeException("해당 유저의 쪽지가 아닙니다.");
         }
-        messageEntity.setStatus(MessageStatus.삭제됨);
-        messageRepository.save(messageEntity);
+        messageRepository.delete(messageEntity);
         logger.info("쪽지 삭제 성공!");
         return MessageDTO.entityToDTO(messageEntity);
     }

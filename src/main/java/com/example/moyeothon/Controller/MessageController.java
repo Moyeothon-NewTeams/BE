@@ -20,16 +20,16 @@ public class MessageController {
 
     // 쪽지 전송
     @Operation(summary = "쪽지 전송")
-    @PostMapping("/{uid}")
-    public ResponseEntity<MessageDTO> createMessage(@PathVariable String uid, @RequestBody MessageDTO messageDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(messageService.createMessage(uid, messageDTO, userDetails));
+    @PostMapping("/{uid}/{bucketListId}")
+    public ResponseEntity<MessageDTO> createMessage(@PathVariable String uid, @PathVariable Long bucketListId, @RequestBody MessageDTO messageDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(messageService.createMessage(uid, bucketListId, messageDTO, userDetails));
     }
 
     // 쪽지 답장
     @Operation(summary = "쪽지 답장")
-    @PostMapping("/reply/{messageId}/{uid}")
-    public ResponseEntity<MessageDTO> replyMessage(@PathVariable Long messageId, @PathVariable String uid, @RequestBody MessageDTO messageDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(messageService.replyMessage(messageId, uid, messageDTO, userDetails));
+    @PostMapping("/reply/{uid}/{messageId}/{bucketListId}")
+    public ResponseEntity<MessageDTO> replyMessage(@PathVariable Long messageId, @PathVariable String uid, @PathVariable Long bucketListId, @RequestBody MessageDTO messageDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(messageService.replyMessage(messageId, uid, bucketListId, messageDTO, userDetails));
     }
 
     // 쪽지 읽음 처리

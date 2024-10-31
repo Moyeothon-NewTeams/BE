@@ -1,5 +1,8 @@
 package com.example.moyeothon.DTO;
 
+import com.example.moyeothon.DTO.BucketDto.RequestDto;
+import com.example.moyeothon.DTO.BucketDto.ResponseDto;
+import com.example.moyeothon.Entity.BucketlistEntity;
 import com.example.moyeothon.Entity.MessageEntity;
 import com.example.moyeothon.Entity.UserEntity;
 import com.example.moyeothon.Enum.MessageStatus;
@@ -21,6 +24,8 @@ public class MessageDTO {
     private UserDTO sender;
     private UserDTO receiver;
     private MessageStatus status;
+    private Long bucketListId;
+    private ResponseDto bucketList;
 
     public static MessageDTO entityToDTO(MessageEntity messageEntity) {
         return new MessageDTO(
@@ -31,11 +36,13 @@ public class MessageDTO {
                 messageEntity.getReceiver().getId(),
                 UserDTO.entityToDto(messageEntity.getSender()),
                 UserDTO.entityToDto(messageEntity.getReceiver()),
-                messageEntity.getStatus()
+                messageEntity.getStatus(),
+                messageEntity.getBucketList().getId(),
+                ResponseDto.entityToDto(messageEntity.getBucketList())
         );
     }
 
-    public MessageEntity dtoToEntity(UserEntity sender, UserEntity receiver, MessageStatus status) {
-        return new MessageEntity(id, content, createTime, sender, receiver, status);
+    public MessageEntity dtoToEntity(UserEntity sender, UserEntity receiver, BucketlistEntity bucketList) {
+        return new MessageEntity(id, content, createTime, sender, receiver, bucketList, status);
     }
 }

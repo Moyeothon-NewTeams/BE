@@ -31,8 +31,8 @@ public class BucketService {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
         UserEntity user = userRepository.findByUid(uid);
-        BucketlistEntity bucket = bucketRepository.save(new BucketlistEntity(requestDto, user));
-        return new ResponseDto(bucket);
+        BucketlistEntity bucketList = bucketRepository.save(new BucketlistEntity(requestDto, user));
+        return ResponseDto.entityToDto(bucketList);
     }
 
     // id로 버킷리스트 조회
@@ -44,7 +44,7 @@ public class BucketService {
         if (!bucketList.isPublic() && !bucketList.getUser().getUid().equals(uid)) {
             throw new RuntimeException("해당 버킷리스트에 접근 권한이 없습니다.");
         }
-        return new ResponseDto(bucketList);
+        return ResponseDto.entityToDto(bucketList);
     }
 
     // 버킷리스트 삭제
@@ -57,7 +57,7 @@ public class BucketService {
             throw new AccessDeniedException("권한이 없는 유저입니다.");
         }
         bucketRepository.deleteById(id);
-        return new ResponseDto(bucketList);
+        return ResponseDto.entityToDto(bucketList);
     }
 
     // 버킷리스트 수정
@@ -70,7 +70,7 @@ public class BucketService {
             throw new AccessDeniedException("권환이 없는 유저입니다.");
         }
         bucketList.update(requestDto);
-        return new ResponseDto(bucketList);
+        return ResponseDto.entityToDto(bucketList);
     }
 
     // 해당 유저 버킷리스트 전체 조회
@@ -108,7 +108,7 @@ public class BucketService {
         }
         return bucketRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword)
                 .stream()
-                .map(ResponseDto::entityToDTO)
+                .map(ResponseDto::entityToDto)
                 .collect(Collectors.toList());
     }
 }

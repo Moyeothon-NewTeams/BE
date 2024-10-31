@@ -26,6 +26,10 @@ public class MessageEntity {
     @ManyToOne
     @JoinColumn(name="receiver_id")
     private UserEntity receiver;
+    
+    @ManyToOne
+    @JoinColumn(name="bucketList_id")
+    private BucketlistEntity bucketList;
 
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
