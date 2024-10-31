@@ -46,8 +46,8 @@ public class MessageController {
         return ResponseEntity.ok(messageService.deleteMessage(messageId, uid, userDetails));
     }
 
-    // 해당 유저 쪽지 전체 조회
-    @Operation(summary = "해당 유저 쪽지 전체 조회")
+    // 해당 유저 송수신 쪽지 전체 조회
+    @Operation(summary = "해당 유저 송수신 쪽지 전체 조회")
     @GetMapping("/user/{uid}")
     public ResponseEntity<List<MessageDTO>> getAllMessagesForUser(@PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(messageService.getAllMessagesForUser(uid, userDetails));
