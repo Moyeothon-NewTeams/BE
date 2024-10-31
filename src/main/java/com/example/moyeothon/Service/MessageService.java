@@ -35,6 +35,9 @@ public class MessageService {
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = userRepository.findById(messageDTO.getReceiverId()).orElseThrow();
         BucketlistEntity bucketList = bucketRepository.findById(bucketListId).orElseThrow();
+        if (!bucketList.getUser().getUid().equals(receiver.getUid())) {
+            throw new RuntimeException("해당 버킷리스트의 생성자에게만 쪽지를 보낼 수 있습니다.");
+        }
         MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, bucketList);
         messageEntity.setCreateTime(LocalDateTime.now());
         messageEntity.setStatus(MessageStatus.안읽음);
@@ -51,6 +54,9 @@ public class MessageService {
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = originalMessage.getSender();
         BucketlistEntity bucketList = bucketRepository.findById(bucketListId).orElseThrow();
+        if (!bucketList.getUser().getUid().equals(receiver.getUid())) {
+            throw new RuntimeException("해당 버킷리스트의 생성자에게만 쪽지를 답장할 수 있습니다.");
+        }
         MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, bucketList);
         messageEntity.setCreateTime(LocalDateTime.now());
         messageEntity.setStatus(MessageStatus.안읽음);
