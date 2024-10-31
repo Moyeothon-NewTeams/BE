@@ -1,6 +1,5 @@
 package com.example.moyeothon.Controller;
 
-
 import com.example.moyeothon.DTO.BucketDto.RequestDto;
 import com.example.moyeothon.DTO.BucketDto.ResponseDto;
 import com.example.moyeothon.Service.BucketService;
@@ -23,48 +22,46 @@ import java.util.List;
 public class BucketController {
     private final BucketService bucketService;
 
+    // 버킷리스트 추가
     @Operation(summary = "bucketList 추가")
-    @PostMapping("/bucket/create/{userId}")
-    public ResponseEntity<ResponseDto> addBucket(@Validated @PathVariable Long userId ,
-                                                 @RequestBody RequestDto requestDto){
-
-        ResponseDto responseDto = bucketService.addBucket(requestDto, userId);
-        return ResponseEntity.ok(responseDto);
+    @PostMapping("/bucket/create/{uid}")
+    public ResponseEntity<ResponseDto> addBucket(@Validated @RequestBody RequestDto requestDto, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(bucketService.addBucket(requestDto, uid, userDetails));
     }
 
+    // id로 버킷리스트 조회
     @Operation(summary = "bucketList 상세보기")
-    @GetMapping("/bucket/{bucketId}/{userId}")
-    public ResponseEntity<ResponseDto> getBucket(@Validated  @PathVariable Long bucketId, @PathVariable(required = false) Long userId){
-        return ResponseEntity.ok(bucketService.getBucket(bucketId,userId));
+    @GetMapping("/bucket/{uid}/{bucketId}")
+    public ResponseEntity<ResponseDto> getBucket(@Validated  @PathVariable Long bucketId, @PathVariable(required = false) String uid, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(bucketService.getBucket(bucketId, uid, userDetails));
     }
 
+    // 버킷리스트 삭제
     @Operation(summary = "bucketList 삭제하기")
-    @DeleteMapping("/bucket/{userId}/{bucketId}")
-    public ResponseEntity<String> deleteBucket(@PathVariable Long userId, @PathVariable Long bucketId) {
-        bucketService.deleteBucket(bucketId, userId);
-        return ResponseEntity.ok("삭제가 성공했습니다.");
+    @DeleteMapping("/bucket/{uid}/{bucketId}")
+    public ResponseEntity<ResponseDto> deleteBucket(@PathVariable Long bucketId, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(bucketService.deleteBucket(bucketId, uid, userDetails));
     }
 
-
+    // 버킷리스트 수정
     @Operation(summary = "bucketList 수정하기")
-    @PutMapping("/bucket/{userId}/{bucketId}")
-    public ResponseEntity<ResponseDto> updateBucket(@Validated @PathVariable Long userId,
-                                                    @PathVariable Long bucketId,
-                                                    @RequestBody RequestDto requestDto){
-        return ResponseEntity.ok(bucketService.updateBucket(bucketId, userId, requestDto));
+    @PutMapping("/bucket/{uid}/{bucketId}")
+    public ResponseEntity<ResponseDto> updateBucket(@Validated @PathVariable Long bucketId, @PathVariable String uid, @RequestBody RequestDto requestDto, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(bucketService.updateBucket(bucketId, uid, requestDto, userDetails));
     }
 
+    // 해당 유저 버킷리스트 전체 조회
     @Operation(summary = "유저의 bucketList 전체 조회")
-    @GetMapping("/user/bucket/{userId}")
-    public ResponseEntity<List<ResponseDto>> getAllUserBucket(@Validated @PathVariable Long userId){
-        return ResponseEntity.ok(bucketService.getUserAllBucket(userId));
-
+    @GetMapping("/user/bucket/{uid}")
+    public ResponseEntity<List<ResponseDto>> getAllUserBucket(@Validated @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(bucketService.getUserAllBucket(uid, userDetails));
     }
 
+    // 버킷리스트 전체 조회
     @Operation(summary = "모든 bucketList 보기")
-    @GetMapping("/bucket/all/{userId}")
-    public ResponseEntity<List<ResponseDto>> getAllBucket(@Validated @PathVariable Long userId){
-        return ResponseEntity.ok(bucketService.getAllBucket(userId));
+    @GetMapping("/bucket/all/{uid}")
+    public ResponseEntity<List<ResponseDto>> getAllBucket(@Validated @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(bucketService.getAllBucket(uid, userDetails));
     }
 
     // 제목, 내용 키워드별로 버킷리스트 검색하기

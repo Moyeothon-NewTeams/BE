@@ -59,6 +59,9 @@ public class MessageService {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
         MessageEntity messageEntity = messageRepository.findById(messageId).orElseThrow();
+        if (!messageEntity.getSender().getUid().equals(uid)) {
+            throw new RuntimeException("해당 유저의 쪽지가 아닙니다.");
+        }
         messageEntity.setStatus(MessageStatus.읽음);
         messageRepository.save(messageEntity);
         logger.info("쪽지 상태 변경 성공!");
@@ -71,6 +74,9 @@ public class MessageService {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
         MessageEntity messageEntity = messageRepository.findById(messageId).orElseThrow();
+        if (!messageEntity.getSender().getUid().equals(uid)) {
+            throw new RuntimeException("해당 유저의 쪽지가 아닙니다.");
+        }
         messageEntity.setStatus(MessageStatus.삭제됨);
         messageRepository.save(messageEntity);
         logger.info("쪽지 삭제 성공!");

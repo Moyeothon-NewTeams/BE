@@ -25,76 +25,79 @@ public class BucketService {
     private final UserRepository userRepository;
     private final BucketRepository bucketRepository;
 
-    public ResponseDto addBucket(RequestDto requestDto, Long userId){
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저 ID가 맞지 않습니다."));
-
+    // 버킷리스트 추가
+    public ResponseDto addBucket(RequestDto requestDto, String uid, UserDetails userDetails){
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        UserEntity user = userRepository.findByUid(uid);
         BucketlistEntity bucket = bucketRepository.save(new BucketlistEntity(requestDto, user));
         return new ResponseDto(bucket);
     }
 
-    public ResponseDto getBucket(Long id, Long userId){
-        BucketlistEntity bucketList = bucketRepository.findById(id)
-                .orElseThrow(()->new IllegalArgumentException("bucketId에 맞는 버킷리스트를 찾을 수 없습니다."));
-
-        if (!bucketList.isPublic() && !bucketList.getUser().getId().equals(userId)) {
+    // id로 버킷리스트 조회
+    public ResponseDto getBucket(Long id, String uid, UserDetails userDetails){
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        BucketlistEntity bucketList = bucketRepository.findById(id).orElseThrow();
+        if (!bucketList.isPublic() && !bucketList.getUser().getUid().equals(uid)) {
             throw new RuntimeException("해당 버킷리스트에 접근 권한이 없습니다.");
         }
         return new ResponseDto(bucketList);
     }
 
-    public void  deleteBucket(Long id, Long userId){
-        // 버킷리스트 조회
-        BucketlistEntity bucketList = bucketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("bucket Id에 맞는 버킷리스트를 찾을 수 없습니다."));
-
-        // 사용자 권한 확인 후 삭제 또는 예외 발생
-        if (bucketList.getUser().getId().equals(userId)) {
-            bucketRepository.deleteById(id);
-        } else {
+    // 버킷리스트 삭제
+    public ResponseDto deleteBucket(Long id, String uid, UserDetails userDetails){
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        BucketlistEntity bucketList = bucketRepository.findById(id).orElseThrow();
+        if (!bucketList.getUser().getUid().equals(uid)) {
             throw new AccessDeniedException("권한이 없는 유저입니다.");
         }
-    }
-
-    public ResponseDto updateBucket(Long id, Long userId, RequestDto requestDto){
-        BucketlistEntity bucketList = bucketRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("bucket Id에 맞는 버킷리스트를 찾을 수 없습니다."));
-
-        if(bucketList.getUser().getId().equals(userId)){
-            bucketList.update(requestDto);
-        }else{
-            throw new AccessDeniedException("권환이 없는 유저입니다.");
-
-        }
+        bucketRepository.deleteById(id);
         return new ResponseDto(bucketList);
     }
 
-    public List<ResponseDto> getUserAllBucket(Long userId){
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(()-> new IllegalArgumentException("userId가 맞지 않습니다."));
-
-        List<BucketlistEntity> bucketlistEntityList = bucketRepository.findByUserId(userId);
-        List<ResponseDto> responseDtoList = new ArrayList<>();
-        for(BucketlistEntity bucket : bucketlistEntityList){
-
-            responseDtoList.add(new ResponseDto(bucket));
-
+    // 버킷리스트 수정
+    public ResponseDto updateBucket(Long id, String uid, RequestDto requestDto, UserDetails userDetails){
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        return responseDtoList;
-
+        BucketlistEntity bucketList = bucketRepository.findById(id).orElseThrow();
+        if(!bucketList.getUser().getUid().equals(uid)){
+            throw new AccessDeniedException("권환이 없는 유저입니다.");
+        }
+        bucketList.update(requestDto);
+        return new ResponseDto(bucketList);
     }
 
-    public List<ResponseDto> getAllBucket(Long userId) {
+    // 해당 유저 버킷리스트 전체 조회
+    public List<ResponseDto> getUserAllBucket(String uid, UserDetails userDetails){
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        List<BucketlistEntity> bucketlistEntityList = bucketRepository.findByUser_Uid(uid);
+        List<ResponseDto> responseDtoList = new ArrayList<>();
+        for(BucketlistEntity bucket : bucketlistEntityList){
+            responseDtoList.add(new ResponseDto(bucket));
+        }
+        return responseDtoList;
+    }
+
+    // 버킷리스트 전체 조회
+    public List<ResponseDto> getAllBucket(String uid, UserDetails userDetails) {
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
         List<BucketlistEntity> bucketlistEntityList = bucketRepository.findAll();
         List<ResponseDto> responseDtoList = new ArrayList<>();
-
         for (BucketlistEntity bucket : bucketlistEntityList) {
-            // 버킷리스트가 공개 상태이거나, 비공개 상태일 때 userId와 작성자 ID가 같을 때만 추가
-            if (bucket.isPublic() || (userId != null && bucket.getUser().getId().equals(userId))) {
+            if (bucket.isPublic() || (bucket.getUser().getUid().equals(uid))) {
                 responseDtoList.add(new ResponseDto(bucket));
             }
         }
-
         return responseDtoList;
     }
 
