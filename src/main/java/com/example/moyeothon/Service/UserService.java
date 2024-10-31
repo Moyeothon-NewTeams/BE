@@ -209,23 +209,8 @@ public class UserService {
             @SuppressWarnings("unchecked")
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
 
-            String name = null;
-            String nickname = null;
-            if (properties != null) {
-                name = (String) properties.get("nickname");
-            }
-            if (name == null) {
-                name = "카카오사용자";
-            }
-
-            if (nickname == null) {
-                nickname = randomNickname();
-            }
-
-            String email = null;
-            if (kakaoAccount != null) {
-                email = (String) kakaoAccount.get("email");
-            }
+            String name = (properties != null) ? (String) properties.get("nickname") : "카카오사용자";
+            String email = (kakaoAccount != null) ? (String) kakaoAccount.get("email") : null;
             if (email == null) {
                 throw new RuntimeException("사용자 이메일을 가져올 수 없습니다.");
             }
@@ -234,6 +219,8 @@ public class UserService {
 
             boolean isNewUser = false;
             if (userEntity == null) {
+                // 새 유저일 때만 랜덤 닉네임 생성
+                String nickname = randomNickname();
                 userEntity = UserEntity.builder()
                         .uid(uid)
                         .nickname(nickname)
@@ -245,8 +232,8 @@ public class UserService {
                 userRepository.save(userEntity);
                 isNewUser = true;
             } else {
+                // 기존 유저일 경우, 닉네임 변경 없이 다른 정보만 업데이트
                 userEntity.setName(name);
-                userEntity.setNickname(nickname);
                 userEntity.setEmail(email);
                 userRepository.save(userEntity);
             }
