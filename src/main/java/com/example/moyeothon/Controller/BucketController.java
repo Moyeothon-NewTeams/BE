@@ -70,4 +70,11 @@ public class BucketController {
     public ResponseEntity<List<ResponseDto>> searchTitleAndContent(@RequestParam String keyword, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(bucketService.searchTitleAndContent(keyword, uid, userDetails));
     }
+
+    // 특정 버킷리스트의 공개 여부 변경
+    @Operation(summary = "특정 버킷리스트의 공개 여부 변경")
+    @PostMapping("/{uid}/{bucketId}")  // 요청 URL에 bucketId 포함
+    public ResponseEntity<ResponseDto> updateBucketVisibility(@PathVariable Long bucketId, @PathVariable String uid, @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(bucketService.updateBucketVisibility(bucketId, uid, userDetails));
+    }
 }

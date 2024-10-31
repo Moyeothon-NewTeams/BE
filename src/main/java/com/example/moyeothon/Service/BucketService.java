@@ -10,6 +10,8 @@ import com.example.moyeothon.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class BucketService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BucketService.class);
     private final UserRepository userRepository;
     private final BucketRepository bucketRepository;
 
@@ -88,7 +92,11 @@ public class BucketService {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        return bucketRepository.findAll().stream().map(ResponseDto::entityToDto).collect(Collectors.toList());
+        return bucketRepository.findAll()
+                    .stream()
+                    .filter(bucket -> bucket.isPublic())
+                    .map(ResponseDto::entityToDto)
+                    .collect(Collectors.toList());
     }
 
     // 제목, 내용 키워드별로 버킷리스트 검색하기
@@ -100,5 +108,22 @@ public class BucketService {
                 .stream()
                 .map(ResponseDto::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    // 특정 버킷리스트의 공개 여부 변경
+    public ResponseDto updateBucketVisibility(Long bucketId, String uid, UserDetails userDetails) {
+        if (!userDetails.getUsername().equals(uid)) {
+            throw new RuntimeException("인증되지 않은 유저입니다.");
+        }
+        BucketlistEntity bucketlist = bucketRepository.findById(bucketId)
+                .orElseThrow(() -> new RuntimeException("버킷리스트를 찾을 수 없습니다."));
+        if (!bucketlist.getUser().getUid().equals(uid)) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+        boolean newIsPublic = !bucketlist.isPublic();
+        bucketlist.setPublic(newIsPublic);
+        bucketRepository.save(bucketlist);
+        logger.info("버킷리스트 ID {}의 공개 여부가 {}로 변경되었습니다.", bucketId, newIsPublic);
+        return ResponseDto.entityToDto(bucketlist);
     }
 }
