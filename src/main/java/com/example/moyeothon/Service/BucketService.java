@@ -74,16 +74,13 @@ public class BucketService {
     }
 
     // 해당 유저 버킷리스트 전체 조회
-    public List<ResponseDto> getUserAllBucket(String uid, UserDetails userDetails){
+    public List<ResponseDto> getUserAllBucket(String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        List<BucketlistEntity> bucketlistEntityList = bucketRepository.findByUser_Uid(uid);
-        List<ResponseDto> responseDtoList = new ArrayList<>();
-        for(BucketlistEntity bucket : bucketlistEntityList){
-            responseDtoList.add(new ResponseDto(bucket));
-        }
-        return responseDtoList;
+        return bucketRepository.findByUser_Uid(uid).stream()
+                .map(ResponseDto::entityToDto)
+                .collect(Collectors.toList());
     }
 
     // 버킷리스트 전체 조회
@@ -91,14 +88,7 @@ public class BucketService {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
         }
-        List<BucketlistEntity> bucketlistEntityList = bucketRepository.findAll();
-        List<ResponseDto> responseDtoList = new ArrayList<>();
-        for (BucketlistEntity bucket : bucketlistEntityList) {
-            if (bucket.isPublic() || (bucket.getUser().getUid().equals(uid))) {
-                responseDtoList.add(new ResponseDto(bucket));
-            }
-        }
-        return responseDtoList;
+        return bucketRepository.findAll().stream().map(ResponseDto::entityToDto).collect(Collectors.toList());
     }
 
     // 제목, 내용 키워드별로 버킷리스트 검색하기
