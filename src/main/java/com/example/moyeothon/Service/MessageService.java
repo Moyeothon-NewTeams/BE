@@ -54,8 +54,13 @@ public class MessageService {
         UserEntity sender = userRepository.findByUid(uid);
         UserEntity receiver = originalMessage.getSender();
         BucketlistEntity bucketList = bucketRepository.findById(bucketListId).orElseThrow();
-        if (!bucketList.getUser().getUid().equals(receiver.getUid())) {
-            throw new RuntimeException("해당 버킷리스트의 생성자에게만 쪽지를 답장할 수 있습니다.");
+        // 원본 쪽지가 해당 버킷리스트에서 생성된 쪽지인지 확인
+        if (!originalMessage.getBucketList().getId().equals(bucketListId)) {
+            throw new RuntimeException("해당 버킷리스트에서 생성된 쪽지에만 답장할 수 있습니다.");
+        }
+        // 원본 쪽지의 발신자에게만 답장을 허용
+        if (!originalMessage.getReceiver().getUid().equals(uid)) {
+            throw new RuntimeException("원본 쪽지의 발신자에게만 답장을 보낼 수 있습니다.");
         }
         MessageEntity messageEntity = messageDTO.dtoToEntity(sender, receiver, bucketList);
         messageEntity.setCreateTime(LocalDateTime.now());
@@ -63,6 +68,7 @@ public class MessageService {
         logger.info("쪽지 답장 성공!");
         return MessageDTO.entityToDTO(messageRepository.save(messageEntity));
     }
+
 
     // 쪽지 읽음 상태로 변경
     public MessageDTO readMessage(Long messageId, String uid, UserDetails userDetails) {
