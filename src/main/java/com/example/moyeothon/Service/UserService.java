@@ -116,7 +116,7 @@ public class UserService {
         if (userEntity == null) {
             throw new RuntimeException("해당 유저가 존재하지 않습니다.");
         }
-        bucketRepository.deleteByUser_Uid(uid);
+        bucketRepository.deleteByUserUid(uid);
         messageRepository.deleteBySenderUid(uid);
         messageRepository.deleteByReceiverUid(uid);
         userRepository.delete(userEntity);
