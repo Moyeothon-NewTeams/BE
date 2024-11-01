@@ -31,6 +31,6 @@ public class UserDTO {
     }
 
     public UserEntity dtoToEntity() {
-        return new UserEntity(id, uid, password, name, nickname, email, provider, new HashSet<>());
+        return new UserEntity(id, uid, password, name, nickname, email, provider, new HashSet<>(), new HashSet<>());
     }
 }

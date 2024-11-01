@@ -10,4 +10,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     List<MessageEntity> findBySenderUid(String senderId);
     List<MessageEntity> findByReceiverUid(String receiverId);
     List<MessageEntity> findByContentContainingIgnoreCase(String keyword);
+    void deleteByBucketListId(Long bucketListId);
+    void deleteBySenderUid(String uid);
+    void deleteByReceiverUid(String uid);
 }

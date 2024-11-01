@@ -6,7 +6,10 @@ import com.example.moyeothon.Config.OAuthProperties.KakaoOAuthProperties;
 import com.example.moyeothon.DTO.JWTDTO;
 import com.example.moyeothon.DTO.UserDTO;
 import com.example.moyeothon.Entity.UserEntity;
+import com.example.moyeothon.Repository.BucketRepository;
+import com.example.moyeothon.Repository.MessageRepository;
 import com.example.moyeothon.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,8 @@ public class UserService {
     private final RestTemplate restTemplate;
     private final KakaoOAuthProperties kakaoOAuthProperties;
     private final GoogleOAuthProperties googleOAuthProperties;
+    private final BucketRepository bucketRepository;
+    private final MessageRepository messageRepository;
 
     // 아이디 중복 확인
     public boolean isUidDuplicate(String uid) {
@@ -95,17 +100,25 @@ public class UserService {
         if (userDTO.getNickname() != null) {
             userEntity.setNickname(userDTO.getNickname());
         }
+
         UserEntity updatedUser = userRepository.save(userEntity);
         logger.info("사용자 정보 업데이트 완료! " + updatedUser);
         return UserDTO.entityToDto(updatedUser);
     }
 
     // 회원 탈퇴
+    @Transactional
     public UserDTO deleteUser(String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("권한이 없습니다");
         }
         UserEntity userEntity = userRepository.findByUid(uid);
+        if (userEntity == null) {
+            throw new RuntimeException("해당 유저가 존재하지 않습니다.");
+        }
+        bucketRepository.deleteByUser_Uid(uid);
+        messageRepository.deleteBySenderUid(uid);
+        messageRepository.deleteByReceiverUid(uid);
         userRepository.delete(userEntity);
         logger.info("유저의 uid가 " + uid + "인 회원탈퇴 완료!");
         return UserDTO.entityToDto(userEntity);

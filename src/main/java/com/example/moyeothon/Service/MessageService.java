@@ -67,7 +67,6 @@ public class MessageService {
         return MessageDTO.entityToDTO(messageRepository.save(messageEntity));
     }
 
-
     // 쪽지 읽음 상태로 변경
     public MessageDTO readMessage(Long messageId, String uid, UserDetails userDetails) {
         if (!userDetails.getUsername().equals(uid)) {

@@ -11,4 +11,5 @@ import java.util.List;
 public interface BucketRepository extends JpaRepository <BucketlistEntity, Long> {
     List<BucketlistEntity> findByUser_Uid(String uid);
     List<BucketlistEntity> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String title, String content);
+    void deleteByUser_Uid(String uid);
 }

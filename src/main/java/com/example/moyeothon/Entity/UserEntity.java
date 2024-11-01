@@ -30,6 +30,10 @@ public class UserEntity implements UserDetails {
     @Builder.Default
     private Set<BucketlistEntity> bucket = new HashSet<>();
 
+    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<MessageEntity> messages = new HashSet<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new HashSet<>();

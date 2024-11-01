@@ -6,6 +6,7 @@ import com.example.moyeothon.DTO.BucketDto.ResponseDto;
 import com.example.moyeothon.Entity.BucketlistEntity;
 import com.example.moyeothon.Entity.UserEntity;
 import com.example.moyeothon.Repository.BucketRepository;
+import com.example.moyeothon.Repository.MessageRepository;
 import com.example.moyeothon.Repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class BucketService {
     private static final Logger logger = LoggerFactory.getLogger(BucketService.class);
     private final UserRepository userRepository;
     private final BucketRepository bucketRepository;
+    private final MessageRepository messageRepository;
 
     // 버킷리스트 추가
     public ResponseDto addBucket(RequestDto requestDto, String uid, UserDetails userDetails){
@@ -52,6 +54,7 @@ public class BucketService {
     }
 
     // 버킷리스트 삭제
+    @Transactional
     public ResponseDto deleteBucket(Long id, String uid, UserDetails userDetails){
         if (!userDetails.getUsername().equals(uid)) {
             throw new RuntimeException("인증되지 않은 유저입니다.");
@@ -60,7 +63,9 @@ public class BucketService {
         if (!bucketList.getUser().getUid().equals(uid)) {
             throw new AccessDeniedException("권한이 없는 유저입니다.");
         }
-        bucketRepository.deleteById(id);
+        messageRepository.deleteBySenderUid(uid);
+        messageRepository.deleteByReceiverUid(uid);
+        bucketRepository.delete(bucketList);
         return ResponseDto.entityToDto(bucketList);
     }
 
