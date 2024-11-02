@@ -63,7 +63,7 @@ public class UserController {
     // 카카오 로그인 성공 시 호출되는 엔드포인트 (GET)
     @Operation(summary = "카카오 로그인 성공 시 호출되는 엔드포인트 (GET)")
     @GetMapping("/oauth2/code/kakao")
-    public ResponseEntity<JWTDTO> kakaoCallback(@RequestParam(name = "code") String code) {
+    public ResponseEntity<JWTDTO> kakaoCallback(@RequestParam String code) {
         return ResponseEntity.ok(userService.loginWithOAuth2(code));
     }
 

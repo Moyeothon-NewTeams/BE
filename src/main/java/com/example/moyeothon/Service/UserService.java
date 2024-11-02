@@ -158,13 +158,27 @@ public class UserService {
                 kakaoOAuthProperties.getClientSecret(),
                 kakaoOAuthProperties.getRedirectUri());
 
-        // 카카오 로그인 URL 로깅
         String authorizationUrl = String.format(
                 "https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code",
                 kakaoOAuthProperties.getClientId(),
                 kakaoOAuthProperties.getRedirectUri()
         );
         logger.info("카카오 로그인 URL : {}", authorizationUrl);
+    }
+
+    @PostConstruct
+    public void logGoogleOAuthSettings(){
+        logger.info("구글 로그인 설정 값 - clientId : {}, clientSecret : {}, redirectUri : {}",
+                googleOAuthProperties.getClientId(),
+                googleOAuthProperties.getClientSecret(),
+                googleOAuthProperties.getRedirectUri());
+
+        String authorizationUrl = String.format(
+                "https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=email%%20profile",
+                googleOAuthProperties.getClientId(),
+                googleOAuthProperties.getRedirectUri()
+        );
+        logger.info("구글 로그인 URL : {}", authorizationUrl);
     }
 
     // 카카오 인가 코드로 액세스 토큰을 요청하는 메서드
