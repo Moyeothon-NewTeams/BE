@@ -363,24 +363,20 @@ public class UserService {
             if (uid == null || name == null || email == null) {
                 throw new RuntimeException("필수 사용자 정보를 가져올 수 없습니다.");
             }
-
-            String nickname = null;
-            if (nickname == null) {
-                nickname = randomNickname();
-            }
-
             Optional<UserEntity> userEntityOptional = Optional.ofNullable(userRepository.findByUid(uid));
             UserEntity userEntity;
             if (userEntityOptional.isPresent()) {
                 userEntity = userEntityOptional.get();
                 userEntity.setName(name);
-                userEntity.setNickname(nickname);
+                if (userEntity.getNickname() == null) {
+                    userEntity.setNickname(randomNickname());
+                }
                 userEntity.setEmail(email);
             } else {
                 userEntity = UserEntity.builder()
                         .uid(uid)
                         .name(name)
-                        .nickname(nickname)
+                        .nickname(randomNickname())
                         .email(email)
                         .password(passwordEncoder.encode("OAuth2_User_Password"))
                         .provider("google")
