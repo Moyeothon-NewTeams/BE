@@ -54,15 +54,15 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .loginPage("/login")
-                                .defaultSuccessUrl("/oauth2/loginSuccess")
-                                .failureUrl("/loginFailure")
-                                .userInfoEndpoint(userInfoEndpoint ->
-                                        userInfoEndpoint.userService(customOAuth2UserService())
-                                )
-                )
+//                .oauth2Login(oauth2Login ->
+//                        oauth2Login
+//                                .loginPage("/login")
+//                                .defaultSuccessUrl("/oauth2/loginSuccess")
+//                                .failureUrl("/loginFailure")
+//                                .userInfoEndpoint(userInfoEndpoint ->
+//                                        userInfoEndpoint.userService(customOAuth2UserService())
+//                                )
+//                )
                 .formLogin(formLogin -> formLogin.disable());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
