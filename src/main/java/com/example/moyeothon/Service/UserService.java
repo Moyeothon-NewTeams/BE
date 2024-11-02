@@ -234,8 +234,6 @@ public class UserService {
     public JWTDTO loginWithOAuth2(String code) {
         try {
             String redirectUri = kakaoOAuthProperties.getRedirectUri();
-            String redirectUrlWithParams = String.format("%s?code=%s&state=%s", redirectUri, code);
-            logger.info("카카오 로그인 성공 후 최종 리다이렉트 URL : {}", redirectUrlWithParams);
             String accessToken = getAccessToken(code);
             Map<String, Object> userInfo = getUserInfo(accessToken);
 
