@@ -6,6 +6,9 @@ swagger:
   server-url: ${SERVER_URL}
 
 spring:
+  profiles:
+    active: prod
+
   application:
     name: moyeothon
 
