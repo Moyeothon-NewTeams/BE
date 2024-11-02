@@ -67,10 +67,24 @@ public class UserController {
         return ResponseEntity.ok(userService.loginWithOAuth2(code));
     }
 
+    // 카카오 로그인 성공 시 호출되는 엔드포인트 (POST)
+    @Operation(summary = "카카오 로그인 성공 시 호출되는 엔드포인트 (POST)")
+    @PostMapping("/oauth2/code/kakao")
+    public ResponseEntity<JWTDTO> kakaoLoginPost(@RequestBody OAuth2CodeDTO codeDTO) {
+        return ResponseEntity.ok(userService.loginWithOAuth2(codeDTO.getCode()));
+    }
+
     // 구글 로그인 성공 시 호출되는 엔드포인트 (GET)
     @Operation(summary = "구글 로그인 성공 시 호출되는 엔드포인트 (GET)")
     @GetMapping("/oauth2/code/google")
     public ResponseEntity<JWTDTO> googleCallback(@RequestParam String code) {
         return ResponseEntity.ok(userService.loginWithGoogleOAuth2(code));
+    }
+
+    // 구글 로그인 성공 시 호출되는 엔드포인트 (POST)
+    @Operation(summary = "구글 로그인 성공 시 호출되는 엔드포인트 (POST)")
+    @PostMapping("/oauth2/code/google")
+    public ResponseEntity<JWTDTO> googleLoginPost(@RequestBody OAuth2CodeDTO codeDTO) {
+        return ResponseEntity.ok(userService.loginWithGoogleOAuth2(codeDTO.getCode()));
     }
 }
