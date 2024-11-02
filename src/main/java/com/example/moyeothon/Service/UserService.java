@@ -9,6 +9,8 @@ import com.example.moyeothon.Entity.UserEntity;
 import com.example.moyeothon.Repository.BucketRepository;
 import com.example.moyeothon.Repository.MessageRepository;
 import com.example.moyeothon.Repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ import java.util.Optional;
 public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -148,6 +151,22 @@ public class UserService {
         return adjective + noun;
     }
 
+    @PostConstruct
+    public void logKakaoOAuthSettings() {
+        logger.info("카카오 로그인 설정 값 - clientId : {}, clientSecret : {}, redirectUri : {}",
+                kakaoOAuthProperties.getClientId(),
+                kakaoOAuthProperties.getClientSecret(),
+                kakaoOAuthProperties.getRedirectUri());
+
+        // 카카오 로그인 URL 로깅
+        String authorizationUrl = String.format(
+                "https://kauth.kakao.com/oauth/authorize?client_id=%s&redirect_uri=%s&response_type=code",
+                kakaoOAuthProperties.getClientId(),
+                kakaoOAuthProperties.getRedirectUri()
+        );
+        logger.info("카카오 로그인 URL : {}", authorizationUrl);
+    }
+
     // 카카오 인가 코드로 액세스 토큰을 요청하는 메서드
     public String getAccessToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
@@ -193,6 +212,8 @@ public class UserService {
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
             Map<String, Object> responseBody = response.getBody();
             if (responseBody != null) {
+                String userInfoJson = objectMapper.writeValueAsString(responseBody);
+                logger.info("사용자 정보 출력 : {}", userInfoJson);
                 logger.info("사용자 정보를 성공적으로 가져왔습니다 : {}", responseBody);
                 return responseBody;
             } else {
@@ -203,12 +224,18 @@ public class UserService {
             logger.error("사용자 정보를 가져오는 중 오류가 발생했습니다. (위치: getUserInfo): {}", e.getMessage());
             logger.error("응답 본문 (위치: getUserInfo): {}", e.getResponseBodyAsString());
             throw e;
+        } catch (Exception e) {
+            logger.error("JSON 변환 중 오류가 발생했습니다: {}", e.getMessage());
+            throw new RuntimeException("JSON 변환 중 오류가 발생했습니다.", e);
         }
     }
 
     // 최종적으로 카카오 로그인을 처리하는 메서드
-    public JWTDTO loginWithOAuth2(String code) {
+    public JWTDTO loginWithOAuth2(String code, String state) {
         try {
+            String redirectUri = kakaoOAuthProperties.getRedirectUri();
+            String redirectUrlWithParams = String.format("%s?code=%s&state=%s", redirectUri, code, state);
+            logger.info("카카오 로그인 성공 후 최종 리다이렉트 URL : {}", redirectUrlWithParams);
             String accessToken = getAccessToken(code);
             Map<String, Object> userInfo = getUserInfo(accessToken);
 
