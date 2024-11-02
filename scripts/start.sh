@@ -23,6 +23,8 @@ IDLE_PROFILE=$(find_idle_profile)
 
 echo "> 새 애플리케이션을 $IDLE_PROFILE 로 실행합니다."
 
+source ~/.bashrc
+
 # 설정 파일의 위치를 지정하고 active profile을 통해 구동될 포트를 지정
 nohup java -jar \
 -Dspring.config.location=$REPOSITORY/config/application.yml,\
