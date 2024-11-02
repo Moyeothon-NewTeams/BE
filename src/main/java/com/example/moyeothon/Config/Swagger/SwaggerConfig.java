@@ -32,7 +32,7 @@ public class SwaggerConfig {
                         ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .info(apiInfo())
-                .servers(List.of(new Server().url(serverUrl), new Server().url("http://localhost:8080")));
+                .servers(List.of(new Server().url(serverUrl)));
 
     }
 
