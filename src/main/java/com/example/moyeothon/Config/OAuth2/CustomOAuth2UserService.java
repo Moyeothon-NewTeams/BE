@@ -30,9 +30,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
+        logger.info("요기1");
+
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
+
+        logger.info("요기2");
 
         // Kakao 사용자 정보 추출
         Long id = oAuth2User.getAttribute(userNameAttributeName);
@@ -65,8 +69,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(userEntity);
         }
 
+        logger.info("요기3");
+
         // 권한 설정
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+
+        logger.info("요기4");
 
         // OAuth2User 반환
         return new CustomOAuth2User(userEntity, Collections.singletonList(authority), oAuth2User.getAttributes());
