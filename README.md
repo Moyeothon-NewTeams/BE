@@ -23,7 +23,7 @@
 
 ### 🚀 Deployment
 <p align="center">
-    <img src="https://skillicons.dev/icons?i=aws"><img src="https://skillicons.dev/icons?i=jenkins"><img src="https://skillicons.dev/icons?i=flask">
+    <img src="https://skillicons.dev/icons?i=aws"><img src="https://skillicons.dev/icons?i=nginx">
 </p>
 
 ### 🗣️ Communication
